@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+qdrant-client
+langchain
+langchain-openai
+langchain-community
+langchain-core
+python-multipart
+sqlmodel
+psycopg2-binary
