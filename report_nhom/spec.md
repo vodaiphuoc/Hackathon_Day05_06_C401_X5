@@ -35,7 +35,7 @@ Có marginal value không? Có. Model thông thường không biết chính xác
 |------|-------------------|-------|
 | **Happy** — AI đúng, tự tin | User thấy gì? Flow kết thúc ra sao? | *AI trả lời đúng giá, gửi đúng mặt bằng căn hộ. Khách hỏi cách đặt cọc, AI xin SĐT và báo ngay cho Saler: "Khách VIP, cần tư vấn ngay".* |
 | **Low-confidence** — AI không chắc | System báo "không chắc" bằng cách nào? User quyết thế nào? | *AI phản hồi: "Em cần xác nhận lại kho hàng thực tế, anh đợi chút nhé". Đồng thời gửi thông báo đẩy "Cần hỗ trợ" về điện thoại của Saler.* |
-| **Failure** — AI sai | User biết AI sai bằng cách nào? Recover ra sao? | *AI báo giá nhầm dự án. Saler xem lịch sử chat thấy sai -> Nhấn nút "Mute AI" và vào đính chính thông tin trực tiếp với khách.* |
+| **Failure** — AI sai | User biết AI sai bằng cách nào? Recover ra sao? | *AI báo giá nhầm dự án. Saler xem lịch sử chat thấy sai -> Nhấn nút "Disable AI" và vào đính chính thông tin trực tiếp với khách.* |
 | **Correction** — user sửa | User sửa bằng cách nào? Data đó đi vào đâu? | *Saler nhấn "Update Info" trên câu trả lời sai. Hệ thống cập nhật lại Knowledge Base để AI không lặp lại lỗi cũ trong tương lai.* |
 
 ---
