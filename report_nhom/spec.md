@@ -60,6 +60,7 @@ Có marginal value không? Có. Model thông thường không biết chính xác
 | 1 | Khách hỏi gộp nhiều chương trình chiết khấu | AI cộng dồn sai tổng giá tiền cuối cùng | Thiết lập AI chỉ đưa ra khoảng giá dự kiến và dẫn link bảng tính chuẩn. |
 | 2 | Khách dùng từ địa phương hoặc viết tắt quá nhiều | AI không hiểu và trả lời lạc đề | Dùng LLM mạnh (Gemini Flash/GPT-4o) có khả năng hiểu tiếng Việt vùng miền tốt. |
 | 3 | Tài liệu dự án cũ chưa được cập nhật kịp | AI tư vấn chính sách đã hết hiệu lực | Gắn Timestamp vào từng file tài liệu trong RAG, AI phải báo: "Dữ liệu tính đến ngày..." |
+| 4 | Khách hàng hỏi về tính pháp lý của dự án (ví dụ: hình thành nhà ở trong tương lai) nhưng tính pháp lý lại không rõ ràng | AI bịa ra thông tin không thật, khuyến nghị đầu tư không chính xác, gây mất uy tín | Dữ liệu RAG phải được dán nhãn về pháp lý, bỏ qua dự án không có tính pháp lý đầy đủ |
 
 ---
 
