@@ -21,6 +21,8 @@ services:
     build: .
     ports:
       - "8000:8000"
+    volumes:               # THÊM DÒNG NÀY
+      - ./app:/app
     env_file:
       - .env
     depends_on:
