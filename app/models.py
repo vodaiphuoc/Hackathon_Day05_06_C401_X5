@@ -1,3 +1,5 @@
+import uuid
+
 from sqlmodel import SQLModel, Field, Relationship
 from typing import List, Optional
 from datetime import datetime
@@ -15,3 +17,8 @@ class Property(SQLModel, table=True):
     price: str
     location: str
     description: str
+
+class ChatSession(SQLModel, table=True):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
+    title: str = Field(default="Tư vấn mua nhà mới")
+    created_at: datetime = Field(default_factory=datetime.utcnow)

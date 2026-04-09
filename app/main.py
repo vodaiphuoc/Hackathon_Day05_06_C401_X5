@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, UploadFile, File, Body
 from sqlmodel import Session, select, delete
 from database import init_db, get_session
-from models import ChatMessage, Property
+from models import ChatMessage, Property, ChatSession
 from engine.rag_service import RAGService
 import csv
 from io import StringIO
@@ -69,9 +69,6 @@ async def upload_properties(file: UploadFile = File(...), db: Session = Depends(
         db.rollback()
         return {"status": "error", "message": f"Lỗi xử lý file CSV: {str(e)}"}
 
-# ==========================================
-# 2. API CHAT VỚI AI (CÓ NHỚ LỊCH SỬ)
-# ==========================================
 @app.post("/chat")
 async def chat(session_id: str = Body(...), message: str = Body(...), db: Session = Depends(get_session)):
     # Lấy 6 tin nhắn gần nhất làm Context
@@ -88,9 +85,6 @@ async def chat(session_id: str = Body(...), message: str = Body(...), db: Sessio
     
     return {"session_id": session_id, "answer": answer}
 
-# ==========================================
-# 3. CÁC API ADMIN (XÓA / DỌN DẸP DB)
-# ==========================================
 @app.delete("/delete_property/{property_id}")
 async def delete_property(property_id: int, db: Session = Depends(get_session)):
     prop = db.get(Property, property_id)
@@ -118,3 +112,34 @@ async def clear_all_data(db: Session = Depends(get_session)):
     rag.clear_all_vdb()
     
     return {"status": "success", "message": "Đã dọn sạch toàn bộ dữ liệu Postgres & Qdrant!"}
+
+@app.get("/chat_history/{session_id}")
+async def get_chat_history(session_id: str, db: Session = Depends(get_session)):
+    # Lấy toàn bộ tin nhắn của session_id này, sắp xếp từ cũ đến mới (asc)
+    statement = select(ChatMessage).where(ChatMessage.session_id == session_id).order_by(ChatMessage.created_at.asc())
+    history = db.exec(statement).all()
+    
+    if not history:
+        return {"session_id": session_id, "history": [], "message": "Chưa có lịch sử chat."}
+        
+    return {
+        "session_id": session_id,
+        "history": [{"role": msg.role, "content": msg.content, "time": msg.created_at} for msg in history]
+    }
+
+@app.post("/create_session")
+async def create_session(db: Session = Depends(get_session)):
+    new_session = ChatSession() # Tự động sinh UUID
+    db.add(new_session)
+    db.commit()
+    db.refresh(new_session)
+    return {
+        "status": "success", 
+        "session_id": new_session.id, 
+        "title": new_session.title
+    }
+
+@app.get("/sessions")
+async def get_all_sessions(db: Session = Depends(get_session)):
+    sessions = db.exec(select(ChatSession).order_by(desc(ChatSession.created_at))).all()
+    return {"sessions": sessions}
