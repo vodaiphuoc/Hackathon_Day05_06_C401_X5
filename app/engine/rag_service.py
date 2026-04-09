@@ -21,11 +21,13 @@ class RAGService:
         except FileNotFoundError:
             self.system_instructions = "Bạn là trợ lý ảo VinHomes chuyên nghiệp."
 
-    def add_to_vdb(self, texts, metadatas):
-        Qdrant.from_texts(
-            texts, self.embeddings, metadatas=metadatas,
-            client=self.client, collection_name=self.collection_name
+    def add_to_vdb(self, text, metadata):
+        vectorstore = Qdrant(
+            client=self.client, 
+            collection_name=self.collection_name, 
+            embeddings=self.embeddings
         )
+        vectorstore.add_texts([text], metadatas=[metadata])
 
     def generate_response(self, history, user_input):
         # Khởi tạo vectorstore để search

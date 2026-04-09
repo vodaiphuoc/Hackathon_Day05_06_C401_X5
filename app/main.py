@@ -17,19 +17,15 @@ async def upload_properties(file: UploadFile = File(...), db: Session = Depends(
     content = await file.read()
     data = json.loads(content) # Format: [{"title": "..", "description": "..", "price": ".."}]
     
-    texts = []
-    metadatas = []
-    
     for item in data:
         # Lưu vào Postgres
         prop = Property(**item)
         db.add(prop)
-        # Chuẩn bị cho Qdrant
-        texts.append(f"{item['title']}: {item['description']}")
-        metadatas.append(item)
+        # Chuẩn bị và nạp vào Qdrant
+        text = f"{item['title']}: {item['description']}"
+        rag.add_to_vdb(text, item)
     
     db.commit()
-    rag.add_to_vdb(texts, metadatas)
     return {"message": f"Đã nạp {len(data)} bất động sản vào hệ thống."}
 
 @app.post("/persist_state")
