@@ -30,6 +30,16 @@ services:
       - db
       - qdrant
 
+  fe:
+    build: ./fe
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./fe:/app
+      - /app/node_modules
+    depends_on:
+      - app
+
 volumes:
   postgres_data:
   qdrant_data:

@@ -9,13 +9,19 @@ from io import StringIO
 app = FastAPI(title="VinHomes AI Sales Assistant")
 rag = RAGService()
 
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 def on_startup():
     init_db()
 
-# ==========================================
-# 1. API NẠP DỮ LIỆU TỪ FILE CSV
-# ==========================================
 @app.post("/upload")
 async def upload_properties(file: UploadFile = File(...), db: Session = Depends(get_session)):
     content = await file.read()
@@ -141,5 +147,5 @@ async def create_session(db: Session = Depends(get_session)):
 
 @app.get("/sessions")
 async def get_all_sessions(db: Session = Depends(get_session)):
-    sessions = db.exec(select(ChatSession).order_by(desc(ChatSession.created_at))).all()
+    sessions = db.exec(select(ChatSession).order_by((ChatSession.created_at))).all()
     return {"sessions": sessions}
