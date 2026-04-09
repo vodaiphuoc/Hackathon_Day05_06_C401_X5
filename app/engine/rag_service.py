@@ -92,10 +92,32 @@ class RAGService:
         except FileNotFoundError:
             self.system_instructions = "Bạn là trợ lý ảo VinHomes chuyên nghiệp."
 
-    def add_to_vdb(self, texts, metadatas):
-        # KHÔNG DÙNG Qdrant.from_texts NỮA!
-        # Dùng hàm này để cộng dồn data không bị lỗi kwarg 'client'
-        self.vectorstore.add_texts(texts=texts, metadatas=metadatas)
+    def add_to_vdb(self, texts, metadatas, ids=None):
+        # Truyền thêm tham số ids vào. 
+        # Qdrant sẽ tự hiểu: ID mới -> Thêm, ID cũ -> Cập nhật đè lên.
+        self.vectorstore.add_texts(texts=texts, metadatas=metadatas, ids=ids)
+
+    def delete_from_vdb(self, ids):
+        # Hàm xóa data theo ID
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=ids
+        )
+
+    def clear_all_vdb(self):
+        # Hàm reset toàn bộ (Rất hữu ích khi test Hackathon)
+        # Xóa collection cũ và tạo lại cái mới tinh
+        self.client.delete_collection(self.collection_name)
+        self.client.create_collection(
+            collection_name=self.collection_name,
+            vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
+        )
+        # Khởi tạo lại vectorstore
+        self.vectorstore = Qdrant(
+            client=self.client, 
+            collection_name=self.collection_name, 
+            embeddings=self.embeddings
+        )
 
     def generate_response(self, history, user_input):
         try:
